@@ -32,7 +32,7 @@ src="https://user-images.githubusercontent.com/56340004/114595038-93ec2700-9cab-
 - C Harshavardhan (AM.EN.U4AIE19021)
   Front-End Developer and Creative Design Expert.
 
-- Ganesha Srinvas (AM.EN.U4AIE19029)
+- D Ganesha Srinvas (AM.EN.U4AIE19029)
   Front-End Developer and Ethical Supervisor.
 
 - Somula Advaith (AM.EN.U4AIE19063)
