@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect,jsonify
+from KafkaProducer.kafkaLogger import sendToTopic
 app = Flask(__name__)
 
 @app.route('/')
@@ -8,6 +9,7 @@ def home():
 @app.route('/sendJsonlog',methods=['POST'])
 def getData():
     content = request.json
+    sendToTopic(content)
     return jsonify({"Status":True})
 
 if __name__ == '__main__':
