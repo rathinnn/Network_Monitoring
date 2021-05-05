@@ -4,6 +4,7 @@ const url = require('url');
 const fs = require('fs');
 const mysql = require('mysql');
 const path = require('path');
+const axios = require('axios');
 const { base64encode, base64decode } = require('nodejs-base64');
 
 let public_directory = path.join(__dirname, '/');
@@ -24,7 +25,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 			let check = false;
 			if (error) {
 				throw error;
-				console.log('ERROR  ', '|' + 'mysql error!');
+				console.log('       ', 'ERROR  ', '|' + 'mysql error!');
 				check = true;
 				return;
 			} else {
@@ -63,7 +64,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 					}
 					var server_request = http.request(options, function(server_response) {
 						server_response.on('error', function(error) {
-							console.log('ERROR  ', '|' + 'http server response error!');
+							console.log('       ', 'ERROR  ', '|' + 'http server response error!', server_response.remoteAddress, ':', server_response.remotePort);
 							check = true;
 							return;
 						});
@@ -73,7 +74,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 						});
 					});
 					server_request.on('error', function(error) {
-						console.log('ERROR   |http server request error!');
+						console.log('        ERROR   |http server request error!', server_request.remoteAddress, ':', server_request.remotePort);
 						check = true;
 						return;
 					});
@@ -104,7 +105,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 
 const proxy_server_listener = proxy_server.listen(temp_port, function(error) {
 	if (error) {
-		console.log('ERROR   |proxy server listener error!');
+		console.log('        ERROR   |proxy server listener error!');
 		return;
 	} else {
 		const listener_local_ip = proxy_server_listener.address();
@@ -121,7 +122,7 @@ proxy_server.on('connect', function(request, client_socket, head) {
 		mysql_connection.query('SELECT * FROM spam_websites_database WHERE url = ?', [hostname], function(error, results, fields) {
 			if (error) {
 				throw error;
-				console.log('ERROR   |mysql error!');
+				console.log('        ERROR   |mysql error!');
 				client_socket.end('HTTP/1.1 500 Internal Server Error\r\n');
 				client_socket.destroy();
 			} else {
@@ -142,34 +143,34 @@ proxy_server.on('connect', function(request, client_socket, head) {
 				} else {
 					const server_socket = net.connect(port, hostname);
 					client_socket.on('error', function(error) {
-						console.log('ERROR   |client socket error!');
+						console.log('        ERROR   |client socket error!', client_socket.remoteAddress, ':', client_socket.remotePort);
 						if (server_socket) {
-							console.log('CLOSED  |server socket!');
+							console.log('        CLOSED  |server socket!', server_socket.remoteAddress, ':', server_socket.remotePort);
 							server_socket.end();
 							return;
 						}
 					});
 					client_socket.on('end', function() {
-						console.log('CLOSED  |client socket!');
+						console.log('        CLOSED  |client socket!', client_socket.remoteAddress, ':', client_socket.remotePort);
 						if (server_socket) {
-							console.log("CLOSED  |server socket!");
+							console.log("        CLOSED  |server socket!", server_socket.remoteAddress, ':', server_socket.remotePort);
 							server_socket.end();
 							return;
 						}
 					});
 					server_socket.on('error', function(error) {
-						console.log('ERROR   |server socket error!');
+						console.log('        ERROR   |server socket error!', server_socket.remoteAddress, ':', server_socket.remotePort);
 						if (client_socket) {
-							console.log('CLOSED  |client socket!');
+							console.log('        CLOSED  |client socket!', client_socket.remoteAddress, ':', client_socket.remotePort);
 							client_socket.end('HTTP/1.1 500 Internal Server Error\r\n');
 							client_socket.destroy();
 							return;
 						}
 					});
 					server_socket.on('end', function() {
-						console.log('CLOSED  |server socket!');
+						console.log('        CLOSED  |server socket!', server_socket.remoteAddress, ':', server_socket.remotePort);
 						if (client_socket) {
-							console.log("CLOSED  |client socket!");
+							console.log("        CLOSED  |client socket!", client_socket.remoteAddress, ':', client_socket.remotePort);
 							client_socket.end();
 							client_socket.destroy();
 							return;
