@@ -1,13 +1,10 @@
 const http = require('http');
 const net = require('net');
 const url = require('url');
-const fs = require('fs');
 const mysql = require('mysql');
-const path = require('path');
 const axios = require('axios');
-const { base64encode, base64decode } = require('nodejs-base64');
 
-let public_directory = path.join(__dirname, '/');
+let api_url = 'http://df24a2d6ca09.ngrok.io/send';
 
 const temp_port = 8080;
 
@@ -26,7 +23,6 @@ const proxy_server = http.createServer(function(client_request, client_response)
 			if (error) {
 				throw error;
 				console.log('       ', 'ERROR  ', '|' + 'mysql error!');
-				check = true;
 				return;
 			} else {
 				if (results.length > 0) {
@@ -39,10 +35,17 @@ const proxy_server = http.createServer(function(client_request, client_response)
 					} else {
 						console.log('BLOCKED', client_request.method, '  ', '|' + client_http_url.hostname);
 					}
-					fs.readFile("block.html", "utf-8", function(error, data) {
-						client_response.write(data);
+					axios.post(api_url, {
+						server_id : 1,
+						status : 'BLOCKED',
+						method : client_request.method,
+						url : client_http_url.hostname
+					}).then((response) => {
+						console.log('       ', 'SENT   ', '|' + 'axios request!');
+					}).catch((error) => {
+						console.log('       ', 'ERROR  ', '|' + 'axios error!');
 					});
-					client_response.end();
+					client_response.end('403 Forbidden');
 					client_response.destroy();
 					return;
 				} else {
@@ -79,13 +82,22 @@ const proxy_server = http.createServer(function(client_request, client_response)
 						return;
 					});
 					if (check == true) {
-						fs.readFile("error.html", "utf-8", function(error, data) {
-							client_response.write(data);
-						});
-						client_response.end();
+						client_response.end('500 Internal Server Error');
 						client_response.destroy();
+						server_response.end();
+						server_response.destroy();
 						return;
 					} else {
+						axios.post(api_url, {
+							server_id : 1,
+							status : 'ALLOWED',
+							method : client_request.method,
+							url : client_http_url.hostname
+						}).then((response) => {
+							console.log('       ', 'SENT   ', '|' + 'request!');
+						}).catch((error) => {
+							console.log('       ', 'ERROR  ', '|' + 'axios error!');
+						});
 						client_request.pipe(server_request, {
 							end : true
 						});
@@ -93,13 +105,6 @@ const proxy_server = http.createServer(function(client_request, client_response)
 				}
 			}
 		});
-	} else {
-		fs.readFile("block.html", "utf-8", function(error, data) {
-			client_response.write(data);
-		});
-		client_response.end();
-		client_response.destroy();
-		return;
 	}
 });
 
@@ -125,6 +130,7 @@ proxy_server.on('connect', function(request, client_socket, head) {
 				console.log('        ERROR   |mysql error!');
 				client_socket.end('HTTP/1.1 500 Internal Server Error\r\n');
 				client_socket.destroy();
+				return;
 			} else {
 				if (results.length > 0) {
 					if (request.method == "GET") {
@@ -138,6 +144,16 @@ proxy_server.on('connect', function(request, client_socket, head) {
 					} else {
 						console.log('BLOCKED', request.method, '|' + hostname);
 					}
+					axios.post(api_url, {
+						server_id : 1,
+						status : 'BLOCKED',
+						method : request.method,
+						url : hostname
+					}).then((response) => {
+						console.log('       ', 'SENT   ', '|' + 'request!');
+					}).catch((error) => {
+						console.log('       ', 'ERROR  ', '|' + 'axios error!');
+					});
 					client_socket.end('HTTP/1.1 401 Unauthorized\r\n');
 					client_socket.destroy();
 				} else {
@@ -188,6 +204,16 @@ proxy_server.on('connect', function(request, client_socket, head) {
 						} else {
 							console.log('ALLOWED', request.method, '|' + hostname);
 						}
+						axios.post(api_url, {
+							server_id : 1,
+							status : 'ALLOWED',
+							method : request.method,
+							url : hostname
+						}).then((response) => {
+							console.log('       ', 'SENT   ', '|' + 'request!');
+						}).catch((error) => {
+							console.log('       ', 'ERROR  ', '|' + 'axios error!');
+						});
 						client_socket.write([
 							'HTTP/1.1 200 Connection Established',
 							'Proxy-agent: zeoxy'
