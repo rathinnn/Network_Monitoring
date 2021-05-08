@@ -11,18 +11,24 @@ df = spark \
   .option("subscribe", "test2") \
   .load()
 schema = StructType([ \
-    StructField("Date",TimestampType(),True),\
-    StructField("Cases",IntegerType(),True), \
-    StructField("Deaths",IntegerType(),True), \
-    StructField("Recovered",IntegerType(),True)
+    StructField("server_id",IntegerType(),True),\
+    StructField("status",StringType(),True), \
+    StructField("method",StringType(),True), \
+    StructField("url", StringType(),True), \
     ])
     #StructField("index",IntegerType(),True), \
 
+coormap ={
+  1:[17.46,78.57],
+  2:[18.56,79.32],
+  3:[19.56,77.32],
+  2:[15.56,79.32]
+}
 df2 = df.selectExpr("CAST(value AS STRING)")
 df2.printSchema()
 schemad = df2.select( from_json(df2.value,schema).alias('value') )
 schemad.printSchema()
-schemad2 = schemad.selectExpr("value.Date", "value.Cases","value.Deaths","value.Recovered").dropDuplicates(["Date"])
+schemad2 = schemad.selectExpr("value.server_id", "value.status","value.method","value.url")
 #schmead2 = schemad2.withColumn("Lat",schemad2.Lat.cast(DoubleType())).withColumn("Lon",schemad2.Lon.cast(DoubleType()))  
 schemad2.printSchema()
 query = schemad2 \
@@ -31,6 +37,36 @@ query = schemad2 \
     .queryName("Trial")\
     .outputMode("Append")\
     .start()
+
+mapdf = schemad2.groupBy("server_id").count()
+piedf = schemad2.groupBy("status").count()
+topsearchdf = schemad2.groupBy("url").count()
+
+query2 = mapdf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial1")\
+    .outputMode("Complete")\
+    .start()
+
+query3 = piedf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial2")\
+    .outputMode("Complete")\
+    .start()
+
+query4 = topsearchdf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial3")\
+    .outputMode("Complete")\
+    .start()
+df = spark.read.table("Trial")
+df1 = spark.read.table("Trial1")
+df2 = spark.read.table("Trial2")
+df3 = spark.read.table("Trial3")
+
 
 #query.awaitTermination()
 
