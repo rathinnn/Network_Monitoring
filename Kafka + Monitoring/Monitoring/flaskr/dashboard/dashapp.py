@@ -13,12 +13,12 @@ import random
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
 
-from plots.mapPlot import updateMap
-from plots.graphPlot import updateCases, updateDeaths, updateRecovered
-from getData import getInititalMap
-from SparkJobs import getinitialMapDF, startMapStreamingDF, IndiaMapDF, USMapDF, UKMapDF, RussiaMapDF
-from SparkJobs import IndiaTotalDF, UKTotalDF, USTotalDF, RussiaTotalDF
-from KafkaJobs import getConsumer,getDict, getGenerator
+from Monitoring.flaskr.plots.mapPlot import updateMap
+from Monitoring.flaskr.plots.graphPlot import updateCases, updateDeaths, updateRecovered
+from Monitoring.flaskr.getData import getInititalMap
+from Monitoring.flaskr.SparkJobs import getinitialMapDF, startMapStreamingDF, IndiaMapDF, USMapDF, UKMapDF, RussiaMapDF
+from Monitoring.flaskr.SparkJobs import IndiaTotalDF, UKTotalDF, USTotalDF, RussiaTotalDF
+from Monitoring.flaskr.KafkaJobs import getConsumer,getDict, getGenerator
 
 def init_dashboard(server):
 
@@ -326,7 +326,7 @@ def init_dashboard(server):
         style=CONTENT_STYLE
     )
 
-    app = dash.Dash(server = server,routes_pathname_prefix="/dashboard/",external_stylesheets=[dbc.themes.BOOTSTRAP])
+    app = dash.Dash(server = server,requests_pathname_prefix="/spark/",external_stylesheets=[dbc.themes.BOOTSTRAP])
     
     app.layout = html.Div([sidebar, content])
 
@@ -363,7 +363,7 @@ def init_dashboard(server):
 
 
 
-    return app.server
+    return app
 
 
 
