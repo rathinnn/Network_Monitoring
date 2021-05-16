@@ -1,5 +1,5 @@
 from Monitoring.flaskr.app import app as monitor
-from KafkaApi.flaskr.app import app as api
+from kafkalogin import app as api
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 import flask
