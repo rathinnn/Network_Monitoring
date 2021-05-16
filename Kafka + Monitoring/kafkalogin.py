@@ -5,7 +5,6 @@ from flask_login import LoginManager
 from api import api as api_blueprint
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from db import db
-# init SQLAlchemy so we can use it later in our models
 
 
 app = Flask(__name__)
