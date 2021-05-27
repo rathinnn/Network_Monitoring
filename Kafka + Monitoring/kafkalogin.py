@@ -1,11 +1,12 @@
 # init.py
-#from Monitoring.flaskr.app import app as monitor
 from flask import Flask
 from flask_login import LoginManager 
 from api import api as api_blueprint
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from db import db
 
+def getdb():
+    return db
 
 app = Flask(__name__)
 
