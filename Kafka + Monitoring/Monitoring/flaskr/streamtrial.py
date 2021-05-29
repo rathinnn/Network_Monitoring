@@ -18,12 +18,6 @@ schema = StructType([ \
     ])
     #StructField("index",IntegerType(),True), \
 
-coormap ={
-  1:[17.46,78.57],
-  2:[18.56,79.32],
-  3:[19.56,77.32],
-  2:[15.56,79.32]
-}
 df2 = df.selectExpr("CAST(value AS STRING)")
 df2.printSchema()
 schemad = df2.select( from_json(df2.value,schema).alias('value') )
@@ -41,6 +35,7 @@ query = schemad2 \
 mapdf = schemad2.groupBy("server_id").count()
 piedf = schemad2.groupBy("status").count()
 topsearchdf = schemad2.groupBy("url").count()
+blockeddf = schemad2.where(schemad2.status=='BLOCKED').groupBy('server_id').count()
 
 query2 = mapdf \
     .writeStream \
@@ -62,10 +57,20 @@ query4 = topsearchdf \
     .queryName("Trial3")\
     .outputMode("Complete")\
     .start()
+
+query5 = blockeddf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial4")\
+    .outputMode("Complete")\
+    .start()
+
 df = spark.read.table("Trial")
 df1 = spark.read.table("Trial1")
 df2 = spark.read.table("Trial2")
-df3 = spark.read.table("Trial3")
+df3 = spark.read.table("Trial3").orderBy('count',ascending = False)
+df4 = df.where(df.status=='BLOCKED').groupBy('server_id').count()
+
 
 
 #query.awaitTermination()

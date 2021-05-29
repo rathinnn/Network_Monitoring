@@ -32,7 +32,7 @@ try:
 
         if(i%5 == 0):
             h = 0
-            #time.sleep(1)
+            time.sleep(5)
        
 except KeyboardInterrupt:
 

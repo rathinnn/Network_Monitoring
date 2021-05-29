@@ -22,3 +22,4 @@ def update():
 def update2():
     return jsonify({"hostnames":updates})
 
+

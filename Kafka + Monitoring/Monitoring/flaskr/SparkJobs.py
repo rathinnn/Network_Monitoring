@@ -1,47 +1,70 @@
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 
+schema = StructType([ \
+    StructField("server_id",IntegerType(),True),\
+    StructField("status",StringType(),True), \
+    StructField("method",StringType(),True), \
+    StructField("url", StringType(),True), \
+    ])
+    #StructField("index",IntegerType(),True), \
 
-def getinitialMapDF(spark,map_json):
-    json_rdd = spark.sparkContext.parallelize([map_json])
-    df = spark.read.json(json_rdd)
-    df = df.withColumn("Date",df.Date.cast(TimestampType())).withColumn("Lat",df.Lat.cast(DoubleType())).withColumn("Lon",df.Lon.cast(DoubleType()))  
-    df = df.filter(df.Date>"2021-04-18")
-    return df
+df2 = df.selectExpr("CAST(value AS STRING)")
+df2.printSchema()
+schemad = df2.select( from_json(df2.value,schema).alias('value') )
+schemad.printSchema()
+schemad2 = schemad.selectExpr("value.server_id", "value.status","value.method","value.url")
+#schmead2 = schemad2.withColumn("Lat",schemad2.Lat.cast(DoubleType())).withColumn("Lon",schemad2.Lon.cast(DoubleType()))  
 
-def startMapStreamingDF(spark):
-    df = spark \
-        .readStream \
-        .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("startingOffsets", "latest") \
-        .option("subscribe", "test2") \
-        .load()
-    schema = StructType([ \
-        StructField("Date",TimestampType(),True),\
-        StructField("Lat",DoubleType(),True), \
-        StructField("Lon",DoubleType(),True), \
-        StructField("Province",StringType(),True), \
-        StructField("Active",IntegerType(),True)
-        ])
-        #StructField("index",IntegerType(),True), \
+mapdf = schemad2.groupBy("server_id").count()
+piedf = schemad2.groupBy("status").count()
+topsearchdf = schemad2.groupBy("url").count()
+blockeddf = schemad2.where(schemad2.status=='BLOCKED').groupBy('server_id').count()
 
-    df2 = df.selectExpr("CAST(value AS STRING)")
-    df2.printSchema()
-    schemad = df2.select( from_json(df2.value,schema).alias('value') )
-    schemad.printSchema()
-    schemad2 = schemad.selectExpr("value.Lat", "value.Lon","value.Active","value.Province","value.Date")
-    #schmead2 = schemad2.withColumn("Lat",schemad2.Lat.cast(DoubleType())).withColumn("Lon",schemad2.Lon.cast(DoubleType()))  
-    schemad2.printSchema()
-    query = schemad2 \
-        .writeStream \
-        .format("memory") \
-        .queryName("Trial")\
-        .outputMode("Append")\
-        .start()
-    df = spark.read.table("Trial")
-    #query.awaitTermination()
-    return df
+query2 = mapdf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial1")\
+    .outputMode("Complete")\
+    .start()
+
+query3 = piedf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial2")\
+    .outputMode("Complete")\
+    .start()
+
+query4 = topsearchdf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial3")\
+    .outputMode("Complete")\
+    .start()
+
+query5 = blockeddf \
+    .writeStream \
+    .format("memory") \
+    .queryName("Trial4")\
+    .outputMode("Complete")\
+    .start()
+
+def getMapDF(spark):
+    df1 = spark.read.table("Trial1")
+    return df1
+
+def getPieDF(spark):
+    df2 = spark.read.table("Trial2")
+    return df2
+
+def getSearchDF(spark):
+    df3 = spark.read.table("Trial3").orderBy('count',ascending = False)
+    return df3
+
+def getblockeddf(spark):
+    df4 = spark.read.table("Trial4")
+    return df4
+
 
 def IndiaMapDF(spark):
     df = spark \
