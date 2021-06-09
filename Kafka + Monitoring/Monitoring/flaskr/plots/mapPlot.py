@@ -1,29 +1,12 @@
-import datetime
 
-
-def updateMap(go,mapDf,px,ACCESS_TOKEN):
-    datetimetoday = datetime.datetime.utcnow()
-    d = str(datetimetoday).split(" ")
-    #print(str(datetimetoday))
-    todaydate = d[0]
-    df = mapDf.filter(mapDf.Date>str(todaydate)).toPandas()
-    #df.show()
-    #mapDf.show()
-    #s = df.select("Active").rdd.flatMap(lambda x: x).collect()
-    s = df["Active"]
+def updateMap(go,df,px,ACCESS_TOKEN):
+    coors = {1:[17.38,78.48], 2:[17.1,79.48], 3:[16.38,78.48], 4:[17.38,79.48]}
     fig = go.Figure(px.scatter_mapbox(
             
-            #lat= df.select("Lat").rdd.flatMap(lambda x: x).collect(),
-            #lon= df.select("Lon").rdd.flatMap(lambda x: x).collect(),
-            lat = df["Lat"],
-            lon = df["Lon"],
-            color= s,
-            size= s,
-            zoom = 4,
-            size_max=50,
-            hover_name = df["Province"],
-            #hover_name= df.select("Province").rdd.flatMap(lambda x: x).collect(),
-            hover_data=[s],
+            lat = [coors[x][0] for x in df['server_id']],
+            lon = [coors[x][1] for x in df['server_id']],
+            size= df['count']
+           
             
         ))
     
@@ -31,7 +14,7 @@ def updateMap(go,mapDf,px,ACCESS_TOKEN):
     mapbox=dict(
         accesstoken=ACCESS_TOKEN,
         
-        zoom=3
+        zoom=6
         )
     )
     return fig

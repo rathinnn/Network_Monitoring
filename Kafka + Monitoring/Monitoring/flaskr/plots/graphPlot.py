@@ -1,91 +1,54 @@
 
-def updateCases(go,x,y):
+def updateMethod(px,df):
     #df = tdf.sort("Date")
     
-    fig = go.Figure([go.Scatter(
-            
+    fig = px.pie(df,values = 'count', names = 'method')
 
-            x = x,
-            y = y,
-            
-            
-        )])
+    return fig
 
+def updateStatus(px,df):
+    #df = tdf.sort("Date")
+    
+    fig = px.pie(df,values = 'count', names = 'status')
 
-    fig.update_layout(
-        title={
-            'text': "Plot of Total Cases",
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
-        xaxis = {
-            'title' : 'Date'
-        },
-        yaxis = {
-            'title' : 'Total Cases'
-        }    
-            
-            )
     return fig
     
-def updateDeaths(go, x,y):
-    #df = tdf.sort("Date")
-    fig = go.Figure([go.Scatter(
-            
-
-            x = x,
-            y = y,
-            
-            
-        )])
-
+def updateSearch(px,df):
+    
+    df = df.head(4)
+    fig = px.bar(df,x = 'url',y = 'count')
 
     fig.update_layout(
-        title={
-            'text': "Plot of Total Deaths",
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
-        xaxis = {
-            'title' : 'Date'
-        },
-        yaxis = {
-            'title' : 'Total Deaths'
-        }    
-            
-            )
+        title = "Most Requests for Websites",
+        )
+    
     return fig
 
-def updateRecovered(go,x,y):
-    #df = tdf.sort("Date")
-    fig = go.Figure([go.Scatter(
-            
-
-            x = x,
-            y = y,
-            
-            
-        )])
-
+def updateTotal(px,df):
+    
+    
+    fig = px.bar(df,x = 'server_id',y = 'count')
 
     fig.update_layout(
-        title={
-            'text': "Plot of Total Recovered",
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
-        xaxis = {
-            'title' : 'Date'
-        },
-        yaxis = {
-            'title' : 'Total Recovered'
-        }    
-            
-            )
+        title = 'Total Requests',
+       )
+    
+    
+    
     return fig
+
+def updateBlocked(px,df):
+    
+    fig = px.bar(df,x = 'server_id',y = 'count')
+
+    fig.update_layout(
+        title = "Requests Blocked",
+        xaxis={'categoryorder':'category ascending'})
+    
+    
+    
+    return fig
+
     
 
     

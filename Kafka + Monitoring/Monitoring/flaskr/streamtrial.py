@@ -76,4 +76,4 @@ df4 = df.where(df.status=='BLOCKED').groupBy('server_id').count()
 #query.awaitTermination()
 
 #df.select(df.key, get_json_object(df.jstring, '$.f1').alias("c0"), get_json_object(df.jstring, '$.f2').alias("c1") ).collect()
-#spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0 trial.py
+#spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0 trial.pydf1.
