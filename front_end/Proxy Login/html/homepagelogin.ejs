@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content = "text/html; charset = utf-8" http-equiv = "Content-Type">
+		<meta content = "utf-8" http-equiv = "encoding">
+		<link rel = "stylesheet" href = "/style/zeltron.css">
+		<title>Login Homepage</title>
+	</head>
+	<body background = '/pictures/background.jpg'>
+		<center>
+			<div class="row">
+				<img src="/pictures/logo.png" alt="zeoxy logo" class="logo">
+			</div>
+			<table>
+				<h1><Welcome <%= user %>!</h1>
+				<form action = '/addurl' method = 'post'>
+					<tr>
+						<td>
+							<input type = 'text' name = 'url' placeholder = 'Enter the url to add' class = 'input' required>
+						</td>
+						<td align = 'center'>
+							<input type = 'submit' class = 'button button1' value = 'Add Url'>
+						</td>
+					</tr>
+				</form>
+				<tr>
+					<td colspan = 2 align = 'center'>
+						<font color = 'green'>
+							<% if (check == 0) { %>
+							<% } else if (check == 1) { %>
+								Other characters present in the url.
+							<% } else if (check == 2) { %>
+								Url already present.
+							<% } else if (check == 3) { %>
+								Url added.
+							<% } %>
+						</font>
+					</td>
+				</tr>
+				<form action = '/searchurl' method = 'post'>
+					<tr>
+						<td>
+							<input type = 'text' name = 'url' placeholder = 'Enter the url to check if it is present' class = 'input' required>
+						</td>
+						<td align = 'center'>
+							<input type = 'submit' class = 'button button1' value = 'Search Url'>
+						</td>
+					</tr>
+				</form>
+				<tr>
+					<td colspan = 2 align = 'center'>
+						<font color = 'green'>
+							<% if (check == 0) { %>
+							<% } else if (check == 4) { %>
+								Other characters present in the url.
+							<% } else if (check == 5) { %>
+								Url already present.
+							<% } else if (check == 6) { %>
+								Url not present.
+							<% } %>
+						</font>
+					</td>
+				</tr>
+				<tr>
+					<td colspan = 2 align = 'center'>
+						<form action = '/logout' method = 'get'>
+							<input type = 'submit' class = 'button button1' value = 'Logout'>
+						</form>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>

@@ -7,6 +7,7 @@ const axios = require('axios');
 let api_url = 'http://df24a2d6ca09.ngrok.io/send';
 
 const temp_port = 8080;
+const server_id = 1;
 
 let mysql_connection = mysql.createConnection({
 	host : 'localhost',
@@ -18,7 +19,7 @@ let mysql_connection = mysql.createConnection({
 const proxy_server = http.createServer(function(client_request, client_response) {
 	const client_http_url = url.parse(client_request.url, true);
 	if (client_http_url.hostname && client_request.method) {
-		mysql_connection.query('SELECT * FROM spam_websites_database WHERE url = ?', [client_http_url.hostname], function(error, results, fields) {
+		mysql_connection.query('SELECT * FROM urls WHERE url = ?', [client_http_url.hostname], function(error, results, fields) {
 			let check = false;
 			if (error) {
 				throw error;
@@ -36,7 +37,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 						console.log('BLOCKED', client_request.method, '  ', '|' + client_http_url.hostname);
 					}
 					axios.post(api_url, {
-						server_id : 1,
+						server_id : server_id,
 						status : 'BLOCKED',
 						method : client_request.method,
 						url : client_http_url.hostname
@@ -45,7 +46,7 @@ const proxy_server = http.createServer(function(client_request, client_response)
 					}).catch((error) => {
 						console.log('       ', 'ERROR  ', '|' + 'axios error!');
 					});
-					client_response.end('403 Forbidden');
+					client_response.end('HTTP/1.1 403 Forbidden\r\n');
 					client_response.destroy();
 					return;
 				} else {
@@ -82,14 +83,14 @@ const proxy_server = http.createServer(function(client_request, client_response)
 						return;
 					});
 					if (check == true) {
-						client_response.end('500 Internal Server Error');
+						client_response.end('HTTP/1.1 500 Internal Server Error\r\n');
 						client_response.destroy();
 						server_response.end();
 						server_response.destroy();
 						return;
 					} else {
 						axios.post(api_url, {
-							server_id : 1,
+							server_id : server_id,
 							status : 'ALLOWED',
 							method : client_request.method,
 							url : client_http_url.hostname
@@ -124,7 +125,7 @@ const proxy_server_listener = proxy_server.listen(temp_port, function(error) {
 proxy_server.on('connect', function(request, client_socket, head) {
 	const { port, hostname } = url.parse(`//${request.url}`, false, true);
 	if (hostname && port) {
-		mysql_connection.query('SELECT * FROM spam_websites_database WHERE url = ?', [hostname], function(error, results, fields) {
+		mysql_connection.query('SELECT * FROM urls WHERE url = ?', [hostname], function(error, results, fields) {
 			if (error) {
 				throw error;
 				console.log('        ERROR   |mysql error!');
@@ -145,7 +146,7 @@ proxy_server.on('connect', function(request, client_socket, head) {
 						console.log('BLOCKED', request.method, '|' + hostname);
 					}
 					axios.post(api_url, {
-						server_id : 1,
+						server_id : server_id,
 						status : 'BLOCKED',
 						method : request.method,
 						url : hostname
@@ -205,7 +206,7 @@ proxy_server.on('connect', function(request, client_socket, head) {
 							console.log('ALLOWED', request.method, '|' + hostname);
 						}
 						axios.post(api_url, {
-							server_id : 1,
+							server_id : server_id,
 							status : 'ALLOWED',
 							method : request.method,
 							url : hostname

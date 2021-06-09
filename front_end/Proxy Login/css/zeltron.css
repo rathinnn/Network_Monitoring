@@ -1,0 +1,106 @@
+.input {
+	width : 500px;
+	height : 49px;
+}
+
+body{
+    background-image:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url(/pictures/cypher.png);
+    height: 100vh;
+    background-size: 100% 100%;
+    background-position: center;
+}
+.logo{
+    float:left;
+    width: auto;
+    filter: brightness(50);
+
+}
+
+/*-----------------------------*/
+/* buttons*/
+/*-----------------------------*/
+.btn:link,
+.btn:visited,
+input[type=submit]{
+    display: inline-block;
+    padding: 10px 50px;
+    font-weight: 300;
+    text-decoration: none;
+    border-radius: 200px;
+    transition: background-color 0.2s, border 0.2s,color 0.2s;
+
+}
+
+.btn-normal:link,
+.btn-normal:visited,
+input[type=submit]{
+    background-color: #e67e22;
+    border :1px solid #e67e22;
+    color: #fff;
+    margin-right: 15px;
+}
+.btn-stiff:link,
+.btn-stiff:visited
+{
+    border :1px solid #e67e22;
+    color: #e67e22;
+}
+.btn:hover,
+.btn:active,
+{
+    background-color: #cf6d17;
+}
+.btn-normal:hover,
+.btn-normal:active,
+input[type=submit]:hover,
+input[type=submit]:active{
+   background-color: #cf6d17;
+
+}
+.btn-stiff:hover,
+.btn-stiff:active{
+    border :1px solid #cf6d17;
+    color: #fff;
+
+}
+
+
+.quote-text-box{
+    position: absolute;
+    width: 1140px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+}
+h1{
+	font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+	margin:0;
+	margin-bottom: 20px;
+    color: #fff;
+    font-size: 240%;
+    word-spacing: 4px;
+
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+html,
+body{
+    background-color: #fff;
+    color: #555;
+    font-family: 'Comic Neue', cursive,sans-serif;
+    font-weight: 300;
+    font-size:20px;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+
+}
+.row{
+	position: fixed;
+}

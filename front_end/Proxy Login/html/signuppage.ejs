@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content = "text/html; charset = utf-8" http-equiv = "Content-Type">
+		<meta content = "utf-8" http-equiv = "encoding">
+		<link rel = "stylesheet" href = "/style/zeltron.css">
+		<title>Sign Up</title>
+	</head>
+	<body background = '/pictures/background.jpg'>
+		<center>
+			<div class="row">
+				<img src="/pictures/logo.png" alt="zeoxy logo" class="logo">
+			</div>
+			<div class="quote-text-box">
+			<table>
+				<h1>Sign Up</h1>
+				<form action = '/signupinfo' method = 'post'>
+					<tr>
+						<td>
+							<input type = 'text' name = 'username' placeholder = 'Username' class = 'input' required>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type = 'password' name = 'password' placeholder = 'Password' class = 'input' required>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type = 'password' name = 'checkpassword' placeholder = 'Re-Type Password' class = 'input' required>
+						</td>
+					</tr>
+					<tr>
+						<td align = 'center'>
+							<input type = 'submit' class = 'button button1' value = 'Sign Up'>
+						</td>
+					</tr>
+					<tr>
+						<td align = 'center'>
+							<font color = 'green'>
+								<% if (check == 0) { %>
+								<% } else if (check == 1) { %>
+									Username or Password or Re-enter password not entered or Username and Password and Re-enter password length must be greater that 999.
+								<% } else if (check == 2) { %>
+									Password and Re-Type Password are different.
+								<% } else if (check  == 3) { %>
+									Username used by someone.
+								<% } %>
+							</font>
+						</td>
+					</tr>
+				</form>
+				<tr>
+					<td align = 'center'>
+						<form action = '/login' method = 'get'>
+							<input type = 'submit' class = 'button button1' value = 'login'>
+						</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+		</center>
+	</body>
+</html>
