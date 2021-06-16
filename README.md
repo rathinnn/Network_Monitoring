@@ -18,28 +18,7 @@ src="https://user-images.githubusercontent.com/56340004/114595038-93ec2700-9cab-
 <b>System Architecture</b>
 </p>
 
-## Roles and Responsibilities(Team member names with Roll numbers)
 
-- Srikar Rachabattuni (AM.EN.U4AIE19051)
-  Proxy Server Development and Deployment
-
-- Rathinn Nair Melath (AM.EN.U4AIE19052)
-  Processing Framework Integration and Network Analytics Dashboard Development and Deployment
-
-- Sai Siddharth Cilamkoti (AM.EN..U4AIE19055)
-  Project Maintainer and ElasticSearch/Lucene API Development
-
-- C Harshavardhan (AM.EN.U4AIE19021)
-  Front-End Developer and Creative Design Expert.
-
-- D Ganesha Srinvas (AM.EN.U4AIE19029)
-  Security Team.
-
-- Somula Advaith (AM.EN.U4AIE19063)
-  Security Team
-
-- Kondamu Manjunath (AM.EN.U4AIE19038)
-  Test Lead and Documentation
 
   
 
